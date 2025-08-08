@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tweet Translator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        textarea, select, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+        }
+        button {
+            background: #1da1f2;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0d8ddb;
+        }
+        .output {
+            background: white;
+            padding: 10px;
+            width: 300px;
+            min-height: 50px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tweet Translator</h1>
+    <textarea id="tweetInput" placeholder="Paste tweet text here"></textarea>
+    <select id="languageSelect">
+        <option value="hi">Hindi</option>
+        <option value="ml">Malayalam</option>
+        <option value="en">English</option>
+        <option value="ta">Tamil</option>
+        <option value="te">Telugu</option>
+        <option value="fr">French</option>
+        <option value="es">Spanish</option>
+    </select>
+    <button onclick="translateTweet()">Translate</button>
+    <h3>Translated Tweet:</h3>
+    <div class="output" id="outputText"></div>
+
+    <script>
+        async function translateTweet() {
+            let text = document.getElementById("tweetInput").value;
+            let targetLang = document.getElementById("languageSelect").value;
+
+            if (!text.trim()) {
+                alert("Please enter a tweet text");
+                return;
+            }
+
+            try {
+                let res = await fetch("https://libretranslate.de/translate", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        q: text,
+                        source: "auto",
+                        target: targetLang,
+                        format: "text"
+                    }),
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                let data = await res.json();
+                document.getElementById("outputText").innerText = data.translatedText;
+            } catch (error) {
+                document.getElementById("outputText").innerText = "Error translating tweet.";
+            }
+        }
+    </script>
+</body>
+</html>
